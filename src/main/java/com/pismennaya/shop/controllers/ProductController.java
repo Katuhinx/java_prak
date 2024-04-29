@@ -4,7 +4,7 @@ import com.pismennaya.shop.interfaces.ProductDAO;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/products")
 public class ProductController {
     private ProductDAO productDAO;
 

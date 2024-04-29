@@ -4,10 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "product")
 @Getter
 @Setter
-@ToString
-
 public class Product implements CommonEntity<Long>  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,4 +43,16 @@ public class Product implements CommonEntity<Long>  {
     private int steam_suply;
     private float warranty;
     private String description;
+
+    public Product() {}
+
+    public Product(int id_category, String name, String production, String country, int price, int quantity, String description) {
+        this.id_category = id_category;
+        this.name = name;
+        this.production = production;
+        this.country = country;
+        this.price = price;
+        this.quantity = quantity;
+        this.description = description;
+    }
 }

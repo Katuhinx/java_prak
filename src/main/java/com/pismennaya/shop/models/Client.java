@@ -1,13 +1,17 @@
 package com.pismennaya.shop.models;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-public class Client {
+@Table(name = "client")
+@Getter
+@Setter
+public class Client implements CommonEntity<Long>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private int id;
+    private Long id;
 
     @Column(nullable = false)
     private String surname;
@@ -18,5 +22,6 @@ public class Client {
     @Column(nullable = false)
     private String phone;
 
+    @Column(nullable = false)
     private String email;
 }

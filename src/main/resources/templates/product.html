@@ -76,14 +76,7 @@
     </div>
 </header>
 <main class="main-content">
-    <div class="product-card" th:each="product : ${products}">
-        <img src="" th:attr="alt=${product.name}" class="product-image">
-        <a th:href="@{|/product/${product.id}|}">
-            <h2 class="product-name" th:text="${product.name}"></h2>
-        </a>
-        <p class="product-price" th:text="|${product.price} руб.|"></p>
-        <p class="product-description" th:text="${product.description}"></p>
-    </div>
+    <h2 class="product-name" th:text="${product.name}"></h2>
 </main>
 </body>
 </html>

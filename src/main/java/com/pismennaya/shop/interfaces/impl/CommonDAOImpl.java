@@ -1,11 +1,12 @@
 package com.pismennaya.shop.interfaces.impl;
 
-import com.pismennaya.shop.models.CommonEntity;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import com.pismennaya.shop.interfaces.CommonDAO;
+import com.pismennaya.shop.models.CommonEntity;
 import jakarta.persistence.criteria.CriteriaQuery;
 import java.io.Serializable;
 import java.util.Collection;
@@ -19,6 +20,11 @@ public abstract class CommonDAOImpl<T extends CommonEntity<ID>, ID extends Seria
 
     public CommonDAOImpl(Class<T> entityClass){
         this.persistentClass = entityClass;
+    }
+
+    @Autowired
+    public void setSessionFactory(LocalSessionFactoryBean sessionFactory) {
+        this.sessionFactory = sessionFactory.getObject();
     }
 
     @Override
