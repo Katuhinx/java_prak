@@ -41,7 +41,7 @@ public class Product implements CommonEntity<Long>  {
     private int power;
     private String material;
     private int steam_suply;
-    private float warranty;
+    private int warranty;
     private String description;
 
     public Product() {}

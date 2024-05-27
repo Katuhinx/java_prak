@@ -13,12 +13,10 @@ import java.util.Collection;
 
 @Repository
 public abstract class CommonDAOImpl<T extends CommonEntity<ID>, ID extends Serializable> implements CommonDAO<T, ID> {
-
     protected SessionFactory sessionFactory;
-
     protected Class<T> persistentClass;
 
-    public CommonDAOImpl(Class<T> entityClass){
+    public CommonDAOImpl(Class<T> entityClass) {
         this.persistentClass = entityClass;
     }
 
@@ -36,6 +34,7 @@ public abstract class CommonDAOImpl<T extends CommonEntity<ID>, ID extends Seria
 
     @Override
     public Collection<T> getAll() {
+        System.out.println(this.persistentClass + " " + sessionFactory);
         try (Session session = sessionFactory.openSession()) {
             CriteriaQuery<T> criteriaQuery = session.getCriteriaBuilder().createQuery(persistentClass);
             criteriaQuery.from(persistentClass);
@@ -45,10 +44,8 @@ public abstract class CommonDAOImpl<T extends CommonEntity<ID>, ID extends Seria
 
     @Override
     public void save(T entity) {
+        System.out.println(this.persistentClass + " " + sessionFactory);
         try (Session session = sessionFactory.openSession()) {
-            if (entity.getId() != null) {
-                entity.setId(null);
-            }
             session.beginTransaction();
             session.saveOrUpdate(entity);
             session.getTransaction().commit();
@@ -65,6 +62,7 @@ public abstract class CommonDAOImpl<T extends CommonEntity<ID>, ID extends Seria
             session.getTransaction().commit();
         }
     }
+
 
     @Override
     public void update(T entity) {

@@ -34,21 +34,21 @@
             justify-content: space-around;
             padding: 20px;
         }
-        .cart-container {
+        .order-container {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
         }
-        .cart-products {
+        .order-products {
             width: 80%;
             margin-bottom: 22px;
             border-spacing: unset;
         }
-        .cart-products thead td {
+        .order-products thead td {
             font-size: 18px;
             font-weight: 600;
         }
-        .cart-products td {
+        .order-products td {
             padding: 8px 24px;
             border: solid #333333 1px;
         }
@@ -56,12 +56,6 @@
             font-weight: 600;
         }
         .product-price {
-        }
-        .product-remove-from-cart-btn {
-            border: unset;
-            background-color: unset;
-            color: #da0a0a;
-            cursor: pointer;
         }
         .total-price {
             margin-bottom: 32px;
@@ -92,32 +86,16 @@
     </div>
 </header>
 <main class="main-content">
-    <h2>Корзина</h2>
-    <div class="cart-container">
-        <table class="cart-products">
-            <thead>
-                <tr>
-                    <td>Товар</td>
-                    <td>Цена</td>
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="product : ${products}">
-                    <td class="product-name" th:text="${product.name}"/>
-                    <td class="product-price" th:text="|${product.price} руб.|"/>
-                    <td>
-                        <form action="#" th:action="@{/removeFromCart}" method="post">
-                            <input type="hidden" th:name="id" th:value="${product.id}">
-                            <button type="submit" class="product-remove-from-cart-btn">Удалить</button>
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <span class="total-price" th:text="|Итого: ${total_price} руб.|"></span>
-    </div>
-    <a class="create-order-btn" href="order">Оформить заказ</a>
+    <h2>Оформление заказа</h2>
+    <form action="#" th:action="@{/createOrder}" method="post">
+        <input type="text" th:name="name" placeholder="Имя" required>
+        <input type="text" th:name="surname" placeholder="Фамилия" required>
+        <input type="email" th:name="email" placeholder="Email" required>
+        <input type="text" th:name="phone" placeholder="Телефон" required>
+        <input type="text" th:name="address" placeholder="Адрес" required>
+        <input type="date" th:name="shipping_date" placeholder="Дата доставки" required>
+        <button type="submit" class="create-order-btn">Оформить заказ</button>
+    </form>
 </main>
 </body>
 </html>

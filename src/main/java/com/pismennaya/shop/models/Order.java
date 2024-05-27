@@ -1,22 +1,41 @@
 package com.pismennaya.shop.models;
 
 import jakarta.persistence.*;
-import java.sql.Date;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import java.time.LocalDate;
 
 @Entity
-public class Order {
+@Table(name = "order")
+@Getter
+@Setter
+@NoArgsConstructor
+public class Order implements CommonEntity<Long>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private int id;
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "client_id", nullable = false)
+    private Client client;
+
+    @CreatedDate
+    private LocalDate order_date;
 
     @Column(nullable = false)
-    private Date order_date;
-
-    @Column(nullable = false)
-    private Date shipping_date;
+    private LocalDate delivery_date;
 
     @Column(nullable = false)
     private String address;
 
+    @Column(nullable = false)
+    private String status;
+
+    public Order(Client client, LocalDate delivery_date, String address, String status) {
+        this.client = client;
+        this.delivery_date = delivery_date;
+        this.address = address;
+        this.status = status;
+    }
 }

@@ -31,8 +31,9 @@ public class HibernateDatabaseConfig {
         Properties hibernateProperties = new Properties();
         hibernateProperties.setProperty("hibernate.ddl-auto", "update");
         hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
-        hibernateProperties.setProperty("connection_pool_size", "1");
-
+        hibernateProperties.setProperty("connection_pool_size", "10");
+        hibernateProperties.setProperty("hibernate.current_session_context_class", "thread");
+        
         sessionFactory.setHibernateProperties(hibernateProperties);
 
         return sessionFactory;

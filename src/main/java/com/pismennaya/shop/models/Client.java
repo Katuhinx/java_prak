@@ -14,14 +14,23 @@ public class Client implements CommonEntity<Long>{
     private Long id;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private String surname;
 
     @Column(nullable = false)
-    private String name;
+    private String email;
 
     @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false)
-    private String email;
+    public Client() {}
+
+    public Client(String name, String surname, String phone, String email) {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.phone = phone;
+    }
 }
