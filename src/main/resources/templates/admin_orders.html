@@ -103,6 +103,7 @@
     <h1 class="logo">Административная панель</h1>
     <div class="main-menu">
         <a href="/admin/products">Товары</a>
+        <a href="/admin/categories">Категории</a>
         <a href="/admin/clients-list">Клиенты</a>
         <a href="/admin/orders">Заказы</a>
     </div>
@@ -112,7 +113,9 @@
     <div class="table-container">
         <div class="form-container">
             <form class="filter-orders-form" action="#" th:action="@{/admin/orders}" method="get">
-                <input type="text" th:name="data" placeholder="Номер заказа">
+                <input type="text" th:name="id" placeholder="Номер заказа">
+                <input type="date" th:name="order_date">
+                <input type="text" th:name="address" placeholder="Адрес доставки">
                 <button type="submit" class="primary-btn">Применить фильтр</button>
             </form>
         </div>

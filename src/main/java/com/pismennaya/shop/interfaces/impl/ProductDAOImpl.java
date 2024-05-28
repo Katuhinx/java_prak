@@ -10,6 +10,8 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import com.pismennaya.shop.interfaces.ProductDAO;
 import com.pismennaya.shop.models.Product;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -24,24 +26,17 @@ public class ProductDAOImpl extends CommonDAOImpl<Product, Long> implements Prod
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Product> criteriaQuery = criteriaBuilder.createQuery(Product.class);
             Root<Product> root = criteriaQuery.from(Product.class);
-            Predicate criteria;
+            List<Predicate> criteria = new ArrayList<>();
 
-            if (!name.equals("null") || !category.equals("null")) {
-                if (name.equals("null")) {
-                    criteria = criteriaBuilder.equal(root.get("category").get("id"), category);
-                } else if (category.equals("null")) {
-                    criteria = criteriaBuilder.like(root.get("name"), "%" + name + "%");
-                } else {
-                    criteria = criteriaBuilder.and(
-                            criteriaBuilder.like(root.get("name"), "%" + name + "%"),
-                            criteriaBuilder.equal(root.get("category").get("id"), category)
-                    );
-                }
-
-                criteriaQuery.select(root).where(criteria);
-            } else {
-                criteriaQuery.select(root);
+            if (!name.equals("null")) {
+                criteria.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
             }
+
+            if (!category.equals("null")) {
+                criteria.add(criteriaBuilder.equal(root.get("category").get("id"), category));
+            }
+
+            criteriaQuery.select(root).where(criteria.toArray(new Predicate[0]));
 
             return session.createQuery(criteriaQuery).getResultList();
         }

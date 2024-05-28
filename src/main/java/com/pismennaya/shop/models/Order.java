@@ -6,7 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import java.sql.Date;
 
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,6 +20,7 @@ public class Order implements CommonEntity<Long>{
     @JoinColumn(name = "client_id", referencedColumnName = "id", nullable = false)
     private Client client;
 
+    @CreatedDate
     @Column(nullable = false)
     private Date order_date;
 

@@ -45,7 +45,7 @@ public class AdminController {
             model.addAttribute("products", products);
             return "admin_products";
         } else {
-            return "auth";
+            return "redirect:/admin/auth";
         }
     }
 
@@ -58,20 +58,20 @@ public class AdminController {
             model.addAttribute("clients", clients);
             return "admin_clients";
         } else {
-            return "auth";
+            return "redirect:/admin/auth";
         }
     }
 
     @GetMapping("/orders")
-    public String clients(Model model, HttpSession session) {
+    public String clients(@RequestParam(value = "id", defaultValue = "null") String id, @RequestParam(value = "order_date", defaultValue = "null") String order_date, @RequestParam(value = "address", defaultValue = "null") String address, Model model, HttpSession session) {
         if (session.getAttribute("manager") != null) {
-            List<Order> orders = (List<Order>) orderDAO.getAll();
+            List<Order> orders = (List<Order>) orderDAO.getByFilters(id, order_date, address);
 
             model.addAttribute("title", "Заказы");
             model.addAttribute("orders", orders);
             return "admin_orders";
         } else {
-            return "auth";
+            return "redirect:/admin/auth";
         }
     }
 
