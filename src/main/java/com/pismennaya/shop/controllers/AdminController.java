@@ -49,7 +49,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/clients-list")
+    @GetMapping("/clients")
     public String clients(@RequestParam(value = "data", defaultValue = "null") String data, Model model, HttpSession session) {
         if (session.getAttribute("manager") != null) {
             List<Client> clients = (List<Client>) clientDAO.getByFilters(data);
@@ -75,6 +75,30 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/categories")
+    public String categories(Model model, HttpSession session) {
+        if (session.getAttribute("manager") != null) {
+            List<Category> categories = (List<Category>) categoryDAO.getAll();
+
+            model.addAttribute("title", "Категории");
+            model.addAttribute("categories", categories);
+            return "admin_categories";
+        } else {
+            return "redirect:/admin/auth";
+        }
+    }
+
+    @GetMapping("/product/{id}")
+    public String product(@PathVariable Long id, Model model) {
+        Product product = productDAO.getById(id);
+        List<Category> categories = (List<Category>) categoryDAO.getAll();
+
+        model.addAttribute("title", product.getName());
+        model.addAttribute("product", product);
+        model.addAttribute("categories", categories);
+        return "admin_product";
+    }
+
     @PostMapping("/authManager")
     public String authManager(@RequestParam("login") String login, @RequestParam("password") String password, Model model, HttpSession session) {
         Manager manager = managerDAO.getByLogin(login, password);
@@ -89,7 +113,7 @@ public class AdminController {
 
 
 
-
+/*
     @GetMapping("/clients")
     public String greetParam(@PathVariable("name") String name) {
 
@@ -101,4 +125,6 @@ public class AdminController {
                                @RequestParam("surname") String surname) {
         return "Nice to meet you, " + name + " " + surname;
     }
+    */
+
 }

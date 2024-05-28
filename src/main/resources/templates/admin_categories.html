@@ -80,42 +80,14 @@
             padding: 8px 18px;
             border: solid #333333 1px;
         }
-        .filter-products-form {
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            margin: 28px 0;
-            padding: 16px 24px;
-            box-shadow: 1px 1px 8px 2px #ececec;
-            border-radius: 8px;
-        }
-        .filter-products-form input {
-            padding: 6px 12px;
-            width: 228px;
-            border-radius: 4px;
-            border-width: 1px;
-        }
-        .filter-products-form select {
-            padding: 6px 12px;
-            width: 128px;
-            border-radius: 4px;
-            border-width: 1px;
-        }
-        .product-image {
-            height: 64px;
-            object-fit: cover;
-        }
-        .product-name {
+        .category-name {
             color: #010d59;
             font-weight: 700;
             text-decoration: unset;
         }
-        .in-stock-text {
-            color: #21a800;
-        }
-        .out-stock-text {
+        .remove-category-btn {
             color: #da0a0a;
+            text-decoration: unset;
         }
     </style>
 </head>
@@ -132,42 +104,25 @@
 <main class="main-content">
     <h2 th:text="${title}" />
     <div class="action-container">
-        <a class="success-btn" href="/admin/newProduct">Добавить товар</a>
+        <a class="success-btn" href="/admin/newProduct">Добавить категорию</a>
     </div>
     <div class="table-container">
-        <div class="form-container">
-            <form class="filter-products-form" action="#" th:action="@{/admin/products}" method="get">
-                <input type="text" th:name="name" placeholder="Название товара">
-                <select th:name="category">
-                    <option value="">Выбрать</option>
-                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">
-                </select>
-                <button type="submit" class="primary-btn">Применить фильтр</button>
-            </form>
-        </div>
         <table class="data-table">
             <thead>
-                <tr>
-                    <td>Фото</td>
-                    <td>Название</td>
-                    <td>Категория</td>
-                    <td>Цена</td>
-                    <td>Наличие</td>
-                </tr>
+            <tr>
+                <td>Название</td>
+                <td></td>
+            </tr>
             </thead>
             <tbody>
-                <tr th:each="product : ${products}">
-                    <td>
-                        <img class="product-image" th:src="@{/img/default-product-image.jpg}" th:attr="alt=${product.name}">
-                    </td>
-                    <td>
-                        <a class="product-name" th:href="@{|/admin/product/${product.id}|}" th:text="${product.name}"/>
-                    </td>
-                    <td th:text="${product.category.name}"/>
-                    <td th:text="|${product.price} руб.|"/>
-                    <td class="in-stock-text" th:if="${product.quantity > 0}">В наличии</td>
-                    <td class="out-stock-text" th:if="${product.quantity == 0}">Отсутствует</td>
-                </tr>
+            <tr th:each="category : ${categories}">
+                <td>
+                    <a class="category-name" th:href="@{|/admin/category/${category.id}|}" th:text="${category.name}"/>
+                </td>
+                <td>
+                    <a class="remove-category-btn" th:href="@{|/admin/category/${category.id}|}" th:text="Удалить"/>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>

@@ -57,6 +57,11 @@
             text-decoration: unset;
             cursor: pointer;
         }
+        .action-container {
+            display: flex;
+            flex-direction: row;
+            margin: 18px 0;
+        }
         .table-container {
             display: flex;
             flex-direction: column;
@@ -104,7 +109,7 @@
     <div class="main-menu">
         <a href="/admin/products">Товары</a>
         <a href="/admin/categories">Категории</a>
-        <a href="/admin/clients-list">Клиенты</a>
+        <a href="/admin/clients">Клиенты</a>
         <a href="/admin/orders">Заказы</a>
     </div>
 </header>
@@ -112,7 +117,7 @@
     <h2 th:text="${title}" />
     <div class="table-container">
         <div class="form-container">
-            <form class="filter-clients-form" action="#" th:action="@{/admin/clients-list}" method="get">
+            <form class="filter-clients-form" action="#" th:action="@{/admin/clients}" method="get">
                 <input type="text" th:name="data" placeholder="Данные клиента">
                 <button type="submit" class="primary-btn">Применить фильтр</button>
             </form>
