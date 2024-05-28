@@ -146,7 +146,7 @@
         </div>
         <div class="product-right-column">
             <h2 class="product-name" th:text="${product.name}"></h2>
-            <span class="product-category">Категория</span>
+            <span class="product-category" th:text="${product.category.name}"></span>
             <span class="product-price" th:text="|${product.price} руб.|"></span>
             <form action="#" th:action="@{/addToCart}" method="post">
                 <input type="hidden" th:name="id" th:value="${product.id}">

@@ -1,16 +1,15 @@
 package com.pismennaya.shop.controllers;
 
-import com.pismennaya.shop.interfaces.ClientDAO;
-import com.pismennaya.shop.interfaces.ManagerDAO;
-import com.pismennaya.shop.interfaces.ProductDAO;
-import com.pismennaya.shop.interfaces.impl.ClientDAOImpl;
-import com.pismennaya.shop.interfaces.impl.ManagerDAOImpl;
-import com.pismennaya.shop.models.Manager;
+import com.pismennaya.shop.interfaces.*;
+import com.pismennaya.shop.interfaces.impl.*;
+import com.pismennaya.shop.models.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -18,7 +17,13 @@ public class AdminController {
     @Autowired
     private final ManagerDAO managerDAO = new ManagerDAOImpl();
     @Autowired
+    private final CategoryDAO categoryDAO = new CategoryDAOImpl();
+    @Autowired
+    private final ProductDAO productDAO = new ProductDAOImpl();
+    @Autowired
     private final ClientDAO clientDAO = new ClientDAOImpl();
+    @Autowired
+    private final OrderDAO orderDAO = new OrderDAOImpl();
 
     @GetMapping("/auth")
     public String auth(@RequestParam(value = "error", defaultValue = "0") int error, Model model) {
@@ -29,13 +34,54 @@ public class AdminController {
         return "auth";
     }
 
+    @GetMapping("/products")
+    public String products(@RequestParam(value = "name", defaultValue = "null") String name, @RequestParam(value = "category", defaultValue = "null") String category, Model model, HttpSession session) {
+        if (session.getAttribute("manager") != null) {
+            List<Category> categories = (List<Category>) categoryDAO.getAll();
+            List<Product> products = (List<Product>) productDAO.getByFilters(name, category);
+
+            model.addAttribute("title", "Товары");
+            model.addAttribute("categories", categories);
+            model.addAttribute("products", products);
+            return "admin_products";
+        } else {
+            return "auth";
+        }
+    }
+
+    @GetMapping("/clients-list")
+    public String clients(@RequestParam(value = "data", defaultValue = "null") String data, Model model, HttpSession session) {
+        if (session.getAttribute("manager") != null) {
+            List<Client> clients = (List<Client>) clientDAO.getByFilters(data);
+
+            model.addAttribute("title", "Клиенты");
+            model.addAttribute("clients", clients);
+            return "admin_clients";
+        } else {
+            return "auth";
+        }
+    }
+
+    @GetMapping("/orders")
+    public String clients(Model model, HttpSession session) {
+        if (session.getAttribute("manager") != null) {
+            List<Order> orders = (List<Order>) orderDAO.getAll();
+
+            model.addAttribute("title", "Заказы");
+            model.addAttribute("orders", orders);
+            return "admin_orders";
+        } else {
+            return "auth";
+        }
+    }
+
     @PostMapping("/authManager")
     public String authManager(@RequestParam("login") String login, @RequestParam("password") String password, Model model, HttpSession session) {
         Manager manager = managerDAO.getByLogin(login, password);
 
         if (manager != null) {
-            session.setAttribute("auth", manager.getId());
-            return "redirect:/";
+            session.setAttribute("manager", manager.getId());
+            return "redirect:/admin/products";
         }
 
         return "redirect:/admin/auth?error=1";

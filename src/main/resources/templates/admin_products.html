@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}" />
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+        }
+        .header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            padding: 14px 42px ;
+            background-color: #010d59;
+        }
+        .header .logo{
+            color: white;
+        }
+        .header .main-menu {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        .header .main-menu a {
+            color: white;
+            margin: 0 18px;
+            text-decoration: unset;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .success-btn {
+            padding: 14px 46px;
+            border: unset;
+            border-radius: 14px;
+            background-color: #21a800;
+            color: #ffffff;
+            font-family: system-ui, sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: unset;
+            cursor: pointer;
+        }
+        .primary-btn {
+            padding: 14px 46px;
+            border: unset;
+            border-radius: 14px;
+            background-color: #0d6efd;
+            color: #ffffff;
+            font-family: system-ui, sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: unset;
+            cursor: pointer;
+        }
+        .table-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .data-table {
+            width: 100%;
+            margin-bottom: 22px;
+            border-spacing: unset;
+        }
+        .data-table thead td {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .data-table td {
+            padding: 8px 18px;
+            border: solid #333333 1px;
+        }
+        .filter-products-form {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin: 28px 0;
+            padding: 16px 24px;
+            box-shadow: 1px 1px 8px 2px #ececec;
+            border-radius: 8px;
+        }
+        .filter-products-form input {
+            padding: 6px 12px;
+            width: 228px;
+            border-radius: 4px;
+            border-width: 1px;
+        }
+        .filter-products-form select {
+            padding: 6px 12px;
+            width: 128px;
+            border-radius: 4px;
+            border-width: 1px;
+        }
+        .product-image {
+            height: 64px;
+            object-fit: cover;
+        }
+        .product-name {
+            color: #010d59;
+            font-weight: 700;
+            text-decoration: unset;
+        }
+        .in-stock-text {
+            color: #21a800;
+        }
+        .out-stock-text {
+            color: #da0a0a;
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <h1 class="logo">Административная панель</h1>
+    <div class="main-menu">
+        <a href="/admin/products">Товары</a>
+        <a href="/admin/clients-list">Клиенты</a>
+        <a href="/admin/orders">Заказы</a>
+    </div>
+</header>
+<main class="main-content">
+    <h2 th:text="${title}" />
+    <a class="success-btn" href="/admin/newProduct">Добавить товар</a>
+    <div class="table-container">
+        <div class="form-container">
+            <form class="filter-products-form" action="#" th:action="@{/admin/products}" method="get">
+                <input type="text" th:name="name" placeholder="Название товара">
+                <select th:name="category">
+                    <option value="">Выбрать</option>
+                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">
+                </select>
+                <button type="submit" class="primary-btn">Применить фильтр</button>
+            </form>
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <td>Фото</td>
+                    <td>Название</td>
+                    <td>Категория</td>
+                    <td>Цена</td>
+                    <td>Наличие</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="product : ${products}">
+                    <td>
+                        <img class="product-image" th:src="@{/img/default-product-image.jpg}" th:attr="alt=${product.name}">
+                    </td>
+                    <td>
+                        <a class="product-name" th:href="@{|/admin/product/${product.id}|}" th:text="${product.name}"/>
+                    </td>
+                    <td th:text="${product.category.name}"/>
+                    <td th:text="|${product.price} руб.|"/>
+                    <td class="in-stock-text" th:if="${product.quantity > 0}">В наличии</td>
+                    <td class="out-stock-text" th:if="${product.quantity == 0}">Отсутствует</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

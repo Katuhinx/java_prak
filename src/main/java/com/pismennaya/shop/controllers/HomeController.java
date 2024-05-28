@@ -123,7 +123,7 @@ public class HomeController {
             clientDAO.save(client);
 
             Order order = new Order();
-            order.setClient_id(client);
+            order.setClient(client);
             order.setOrder_date(Date.valueOf(LocalDate.now()));
             order.setDelivery_date(Date.valueOf(LocalDate.now()));
             order.setAddress("Адрес 1");

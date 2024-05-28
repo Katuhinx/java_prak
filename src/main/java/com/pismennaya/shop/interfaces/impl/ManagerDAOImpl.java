@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class ManagerDAOImpl extends CommonDAOImpl<Manager, Long> implements ManagerDAO {
-    public ManagerDAOImpl(){
+    public ManagerDAOImpl() {
         super(Manager.class);
     }
 

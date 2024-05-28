@@ -1,16 +1,23 @@
 package com.pismennaya.shop.models;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-public class Category {
+@Table(name = "category")
+@Getter
+@Setter
+@NoArgsConstructor
+public class Category implements CommonEntity<Long>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private int id;
+    private Long id;
 
     @Column(nullable = false)
     private String name;
 
-    private String field;
+    public Category(String name) {
+        this.name = name;
+    }
 }

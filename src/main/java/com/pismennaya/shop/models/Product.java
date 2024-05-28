@@ -13,8 +13,9 @@ public class Product implements CommonEntity<Long>  {
     @Column(nullable = false)
     private Long id;
 
-    @Column(nullable = false)
-    private int id_category;
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
+    private Category category;
 
     @Column(nullable = false)
     private String name;
@@ -46,8 +47,8 @@ public class Product implements CommonEntity<Long>  {
 
     public Product() {}
 
-    public Product(int id_category, String name, String production, String country, int price, int quantity, String description) {
-        this.id_category = id_category;
+    public Product(Category category, String name, String production, String country, int price, int quantity, String description) {
+        this.category = category;
         this.name = name;
         this.production = production;
         this.country = country;

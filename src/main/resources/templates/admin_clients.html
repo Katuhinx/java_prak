@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}" />
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+        }
+        .header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            padding: 14px 42px ;
+            background-color: #010d59;
+        }
+        .header .logo{
+            color: white;
+        }
+        .header .main-menu {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        .header .main-menu a {
+            color: white;
+            margin: 0 18px;
+            text-decoration: unset;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .success-btn {
+            padding: 14px 46px;
+            border: unset;
+            border-radius: 14px;
+            background-color: #21a800;
+            color: #ffffff;
+            font-family: system-ui, sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: unset;
+            cursor: pointer;
+        }
+        .primary-btn {
+            padding: 14px 46px;
+            border: unset;
+            border-radius: 14px;
+            background-color: #0d6efd;
+            color: #ffffff;
+            font-family: system-ui, sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: unset;
+            cursor: pointer;
+        }
+        .table-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .data-table {
+            width: 100%;
+            margin-bottom: 22px;
+            border-spacing: unset;
+        }
+        .data-table thead td {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .data-table td {
+            padding: 8px 18px;
+            border: solid #333333 1px;
+        }
+        .filter-clients-form {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin: 28px 0;
+            padding: 16px 24px;
+            box-shadow: 1px 1px 8px 2px #ececec;
+            border-radius: 8px;
+        }
+        .filter-clients-form input {
+            padding: 6px 12px;
+            width: 228px;
+            border-radius: 4px;
+            border-width: 1px;
+        }
+        .client-name {
+            color: #010d59;
+            font-weight: 700;
+            text-decoration: unset;
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <h1 class="logo">Административная панель</h1>
+    <div class="main-menu">
+        <a href="/admin/products">Товары</a>
+        <a href="/admin/clients-list">Клиенты</a>
+        <a href="/admin/orders">Заказы</a>
+    </div>
+</header>
+<main class="main-content">
+    <h2 th:text="${title}" />
+    <div class="table-container">
+        <div class="form-container">
+            <form class="filter-clients-form" action="#" th:action="@{/admin/clients-list}" method="get">
+                <input type="text" th:name="data" placeholder="Данные клиента">
+                <button type="submit" class="primary-btn">Применить фильтр</button>
+            </form>
+        </div>
+        <table class="data-table">
+            <thead>
+            <tr>
+                <td>Фамилия</td>
+                <td>Имя</td>
+                <td>Телефон</td>
+                <td>Почта</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="client : ${clients}">
+                <td>
+                    <a class="client-name" th:href="@{|/admin/client/${client.id}|}" th:text="${client.name}"/>
+                </td>
+                <td>
+                    <a class="client-name" th:href="@{|/admin/client/${client.id}|}" th:text="${client.surname}"/>
+                </td>
+                <td th:text="${client.phone}"/>
+                <td th:text="${client.email}"/>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

@@ -17,8 +17,8 @@ public class Order implements CommonEntity<Long>{
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "client_id", nullable = false)
-    private Client client_id;
+    @JoinColumn(name = "client_id", referencedColumnName = "id", nullable = false)
+    private Client client;
 
     @Column(nullable = false)
     private Date order_date;
@@ -33,7 +33,7 @@ public class Order implements CommonEntity<Long>{
     private String status;
 
     public Order(Client client, Date delivery_date, String address, String status) {
-        this.client_id = client;
+        this.client = client;
         this.delivery_date = delivery_date;
         this.address = address;
         this.status = status;

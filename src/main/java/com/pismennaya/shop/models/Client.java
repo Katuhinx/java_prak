@@ -7,6 +7,7 @@ import lombok.*;
 @Table(name = "client")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Client implements CommonEntity<Long>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +25,6 @@ public class Client implements CommonEntity<Long>{
 
     @Column(nullable = false)
     private String phone;
-
-    public Client() {}
 
     public Client(String name, String surname, String phone, String email) {
         this.name = name;
