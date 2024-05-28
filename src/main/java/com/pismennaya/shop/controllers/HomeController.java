@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.crypto.Data;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,17 +114,24 @@ public class HomeController {
     }
 
     @GetMapping("/createOrder")
-    public void createOrder(Model model, HttpSession session) {
-        List<Order> orders = (List<Order>) orderDAO.getAll();
-        //List<Long> cart = (List<Long>) session.getAttribute("cart");
+    public String createOrder(Model model, HttpSession session) {
+        //List<Client> orders = (List<Client>) clientDAO.getAll();
+        List<Long> cart = (List<Long>) session.getAttribute("cart");
 
-        //if (cart != null) {
+        if (cart != null) {
+            Client client = new Client("Петр", "Иванов", "89123456780", "client2@example.com" );
+            clientDAO.save(client);
 
-            //Client client = new Client("Петр", "Иванов", "89123456780", "client2@example.com" );
-            //clientDAO.save(client);
-            //orderDAO.save(new Order(client, LocalDate.now(), "Адрес 1", "preparation"));
-        //}
+            Order order = new Order();
+            order.setClient_id(client);
+            order.setOrder_date(Date.valueOf(LocalDate.now()));
+            order.setDelivery_date(Date.valueOf(LocalDate.now()));
+            order.setAddress("Адрес 1");
+            order.setStatus("preparation");
 
-        //return "redirect:/";
+            orderDAO.save(order);
+        }
+
+        return "redirect:/";
     }
 }

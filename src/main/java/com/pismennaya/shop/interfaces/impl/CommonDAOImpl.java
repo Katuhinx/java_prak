@@ -34,7 +34,7 @@ public abstract class CommonDAOImpl<T extends CommonEntity<ID>, ID extends Seria
 
     @Override
     public Collection<T> getAll() {
-        System.out.println(this.persistentClass + " " + sessionFactory);
+        //System.out.println(this.persistentClass + " " + sessionFactory);
         try (Session session = sessionFactory.openSession()) {
             CriteriaQuery<T> criteriaQuery = session.getCriteriaBuilder().createQuery(persistentClass);
             criteriaQuery.from(persistentClass);
@@ -44,7 +44,7 @@ public abstract class CommonDAOImpl<T extends CommonEntity<ID>, ID extends Seria
 
     @Override
     public void save(T entity) {
-        System.out.println(this.persistentClass + " " + sessionFactory);
+        //System.out.println(this.persistentClass + " " + sessionFactory);
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             session.saveOrUpdate(entity);

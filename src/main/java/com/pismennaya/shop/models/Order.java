@@ -3,7 +3,7 @@ package com.pismennaya.shop.models;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
-import java.time.LocalDate;
+import java.sql.Date;
 
 @Entity
 @Table(name = "order")
@@ -18,13 +18,13 @@ public class Order implements CommonEntity<Long>{
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
-    private Client client;
-
-    @CreatedDate
-    private LocalDate order_date;
+    private Client client_id;
 
     @Column(nullable = false)
-    private LocalDate delivery_date;
+    private Date order_date;
+
+    @Column(nullable = false)
+    private Date delivery_date;
 
     @Column(nullable = false)
     private String address;
@@ -32,8 +32,8 @@ public class Order implements CommonEntity<Long>{
     @Column(nullable = false)
     private String status;
 
-    public Order(Client client, LocalDate delivery_date, String address, String status) {
-        this.client = client;
+    public Order(Client client, Date delivery_date, String address, String status) {
+        this.client_id = client;
         this.delivery_date = delivery_date;
         this.address = address;
         this.status = status;
