@@ -9,4 +9,5 @@ public class OrderDAOImpl extends CommonDAOImpl<Order, Long> implements OrderDAO
     public OrderDAOImpl(){
         super(Order.class);
     }
+
 }
