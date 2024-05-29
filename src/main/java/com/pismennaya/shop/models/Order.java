@@ -34,7 +34,7 @@ public class Order implements CommonEntity<Long>{
     @Column(nullable = false)
     private String status;
 
-    @OneToMany(mappedBy = "order_id")
+    @OneToMany(mappedBy = "order")
     private Set<OrderProduct> orderProducts;
 
     public Order(Client client, Date delivery_date, String address, String status) {

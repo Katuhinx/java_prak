@@ -128,18 +128,16 @@
             <thead>
             <tr>
                 <td>Номер заказа</td>
-                <td>Сумма</td>
                 <td>Дата заказа</td>
                 <td>Дата доставки</td>
                 <td>Статус</td>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="order, iter : ${orders}">
+            <tr th:each="order : ${orders}">
                 <td>
                     <a class="order-number" th:href="@{|/admin/order/${order.id}|}" th:text="${order.id}"/>
                 </td>
-                <td th:text="${sum_list.get(iter.index)}"/>
                 <td th:text="${order.order_date}"/>
                 <td th:text="${order.delivery_date}"/>
                 <td th:text="${order.status}"/>

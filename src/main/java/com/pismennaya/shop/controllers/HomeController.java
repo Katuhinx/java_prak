@@ -2,9 +2,11 @@ package com.pismennaya.shop.controllers;
 
 import com.pismennaya.shop.interfaces.ClientDAO;
 import com.pismennaya.shop.interfaces.OrderDAO;
+import com.pismennaya.shop.interfaces.OrderProductDAO;
 import com.pismennaya.shop.interfaces.ProductDAO;
 import com.pismennaya.shop.interfaces.impl.ClientDAOImpl;
 import com.pismennaya.shop.interfaces.impl.OrderDAOImpl;
+import com.pismennaya.shop.interfaces.impl.OrderProductDAOImpl;
 import com.pismennaya.shop.interfaces.impl.ProductDAOImpl;
 import com.pismennaya.shop.models.Client;
 import com.pismennaya.shop.models.Order;
@@ -20,7 +22,9 @@ import javax.xml.crypto.Data;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Controller
@@ -32,6 +36,8 @@ public class HomeController {
     private final ClientDAO clientDAO = new ClientDAOImpl();
     @Autowired
     private final OrderDAO orderDAO = new OrderDAOImpl();
+    @Autowired
+    private final OrderProductDAO orderProductDAO = new OrderProductDAOImpl();
 
     @GetMapping("/")
     public String home(Model model) {
@@ -137,6 +143,7 @@ public class HomeController {
             Client client = clientDAO.getByPhone(phone);
 
             if (client == null) {
+                client = new Client();
                 client.setName(name);
                 client.setSurname(surname);
                 client.setPhone(phone);
@@ -147,7 +154,7 @@ public class HomeController {
             }
 
             Order order = new Order();
-            List<OrderProduct> order_products = new ArrayList();
+            Set<OrderProduct> order_products = new HashSet<>();
 
             for(Long id : cart) {
                 Product product = productDAO.getById(id);
@@ -166,6 +173,10 @@ public class HomeController {
             order.setOrderProducts(order_products);
 
             orderDAO.save(order);
+            orderProductDAO.saveCollection(order_products);
+
+            cart = new ArrayList<>();
+            session.setAttribute("cart", cart);
         }
 
         return "redirect:/success-order";

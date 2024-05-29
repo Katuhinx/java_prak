@@ -1,155 +1,123 @@
+package com.pismennaya.shop.controllers;
+
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import java.time.Duration;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
-@ExtendWith(SpringExtension.class)
-
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-
-public class HomeControllerSystemTests {
-    @LocalServerPort
-
-    private int port;
-
-
+@SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class HomeControllerTests {
     private WebDriver driver;
 
-
     @BeforeEach
-
     public void setUp() {
-
-        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
-
+        System.setProperty("webdriver.chrome.driver", "D:\\chromedriver-win64\\chromedriver.exe");
         driver = new ChromeDriver();
-
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
-        driver.get("http://localhost:" + port);
-
+        driver.get("http://localhost:8081");
     }
-
 
     @AfterEach
-
     public void tearDown() {
-
         if (driver!= null) {
-
             driver.quit();
-
         }
-
     }
 
 
     @Test
-
     public void testHome() {
-
-        List<WebElement> products = driver.findElements(By.cssSelector(".product"));
-
+        List<WebElement> products = driver.findElements(By.cssSelector(".product-card"));
         assertTrue(products.size() > 0);
-
     }
 
 
     @Test
-
     public void testProduct() {
-
-        driver.findElement(By.cssSelector(".product a")).click();
-
-        WebElement title = driver.findElement(By.cssSelector("h1"));
-
+        driver.findElement(By.cssSelector(".product-card a")).click();
+        WebElement title = driver.findElement(By.cssSelector("h2"));
         assertTrue(title.isDisplayed());
-
     }
 
 
     @Test
-
     public void testCart() {
-
-        driver.findElement(By.cssSelector(".product a")).click();
-
-        driver.findElement(By.cssSelector(".add-to-cart")).click();
-
-        driver.findElement(By.cssSelector(".cart a")).click();
-
-        List<WebElement> products = driver.findElements(By.cssSelector(".cart-product"));
-
+        driver.findElement(By.cssSelector(".product-card a")).click();
+        driver.findElement(By.cssSelector(".product-add-to-cart-btn")).click();
+        driver.findElement(By.cssSelector("a.cart-menu")).click();
+        List<WebElement> products = driver.findElements(By.cssSelector(".cart-products tbody tr"));
         assertTrue(products.size() > 0);
 
     }
 
 
     @Test
-
     public void testOrder() {
-
-        driver.findElement(By.cssSelector(".product a")).click();
-
-        driver.findElement(By.cssSelector(".add-to-cart")).click();
-
-        driver.findElement(By.cssSelector(".cart a")).click();
-
-        driver.findElement(By.cssSelector(".order-button")).click();
-
-        WebElement title = driver.findElement(By.cssSelector("h1"));
-
+        driver.findElement(By.cssSelector(".product-card a")).click();
+        driver.findElement(By.cssSelector(".product-add-to-cart-btn")).click();
+        driver.findElement(By.cssSelector("a.cart-menu")).click();
+        driver.findElement(By.cssSelector(".create-order-btn")).click();
+        WebElement title = driver.findElement(By.cssSelector("h2"));
         assertTrue(title.getText().contains("Оформление заказа"));
-
     }
-
 
     @Test
     public void testSuccessOrder() {
-        driver.findElement(By.cssSelector(".product a")).click();
-        driver.findElement(By.cssSelector(".add-to-cart")).click();
-        driver.findElement(By.cssSelector(".cart a")).click();
-        driver.findElement(By.cssSelector(".order-button")).click();
-        driver.findElement(By.cssSelector(".order-form input[name='name']")).sendKeys("Test Name");
-        driver.findElement(By.cssSelector(".order-form input[name='surname']")).sendKeys("Test Surname");
-        driver.findElement(By.cssSelector(".order-form input[name='phone']")).sendKeys("1234567890");
-        driver.findElement(By.cssSelector(".order-form input[name='email']")).sendKeys("test@example.com");
-        driver.findElement(By.cssSelector(".order-form input[name='address']")).sendKeys("Test Address");
-        driver.findElement(By.cssSelector(".order-form input[name='delivery_date']")).sendKeys(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-        driver.findElement(By.cssSelector(".order-form button[type='submit']")).click();
-        WebElement title = driver.findElement(By.cssSelector("h1"));
+        driver.findElement(By.cssSelector(".product-card a")).click();
+        driver.findElement(By.cssSelector(".product-add-to-cart-btn")).click();
+        driver.findElement(By.cssSelector("a.cart-menu")).click();
+        driver.findElement(By.cssSelector(".create-order-btn")).click();
+        driver.findElement(By.cssSelector("form input[name='name']")).sendKeys("Тест1");
+        driver.findElement(By.cssSelector("form input[name='surname']")).sendKeys("Тест1");
+        driver.findElement(By.cssSelector("form input[name='phone']")).sendKeys("891234567812");
+        driver.findElement(By.cssSelector("form input[name='email']")).sendKeys("client111@example.com");
+        driver.findElement(By.cssSelector("form input[name='address']")).sendKeys("Адрес 563");
+        driver.findElement(By.cssSelector("form input[name='delivery_date']")).sendKeys(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        driver.findElement(By.cssSelector("form button[type='submit']")).click();
+        WebElement title = driver.findElement(By.cssSelector("h2"));
         assertTrue(title.getText().contains("Заказ успешно оформлен!"));
-
     }
 
     @Test
     public void testAddToCart() {
-        driver.findElement(By.cssSelector(".product a")).click();
-        int initialCartSize = driver.findElements(By.cssSelector(".cart-product")).size();
-        driver.findElement(By.cssSelector(".add-to-cart")).click();
-        int finalCartSize = driver.findElements(By.cssSelector(".cart-product")).size();
+        driver.findElement(By.cssSelector(".product-card a")).click();
+        driver.findElement(By.cssSelector("a.cart-menu")).click();
+        int initialCartSize = driver.findElements(By.cssSelector(".cart-products tbody tr")).size();
+        driver.findElement(By.cssSelector("a.main-page-menu")).click();
+        driver.findElement(By.cssSelector(".product-card a")).click();
+        driver.findElement(By.cssSelector(".product-add-to-cart-btn")).click();
+        driver.findElement(By.cssSelector("a.cart-menu")).click();
+        int finalCartSize = driver.findElements(By.cssSelector(".cart-products tbody tr")).size();
         assertTrue(finalCartSize > initialCartSize);
     }
 
     @Test
     public void testRemoveFromCart() {
-        driver.findElement(By.cssSelector(".product a")).click();
-        driver.findElement(By.cssSelector(".add-to-cart")).click();
-        driver.findElement(By.cssSelector(".cart a")).click();
-        int initialCartSize = driver.findElements(By.cssSelector(".cart-product")).size();
-        driver.findElement(By.cssSelector(".cart-product.remove-from-cart")).click();
-        int finalCartSize = driver.findElements(By.cssSelector(".cart-product")).size();
+        driver.findElement(By.cssSelector(".product-card a")).click();
+        driver.findElement(By.cssSelector(".product-add-to-cart-btn")).click();
+        driver.findElement(By.cssSelector("a.cart-menu")).click();
+        int initialCartSize = driver.findElements(By.cssSelector(".cart-products tbody tr")).size();
+        driver.findElement(By.cssSelector(".cart-product tbody tr .product-remove-from-cart-btn")).click();
+        int finalCartSize = driver.findElements(By.cssSelector(".cart-products tbody tr")).size();
         assertTrue(finalCartSize < initialCartSize);
-
     }
 }
 

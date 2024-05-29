@@ -9,8 +9,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/admin")
@@ -25,6 +27,8 @@ public class AdminController {
     private final ClientDAO clientDAO = new ClientDAOImpl();
     @Autowired
     private final OrderDAO orderDAO = new OrderDAOImpl();
+    @Autowired
+    private final OrderProductDAO orderProductDAO = new OrderProductDAOImpl();
 
     @GetMapping("/auth")
     public String auth(@RequestParam(value = "error", defaultValue = "0") int error, Model model) {
@@ -67,21 +71,9 @@ public class AdminController {
     public String clients(@RequestParam(value = "id", defaultValue = "null") String id, @RequestParam(value = "order_date", defaultValue = "null") String order_date, @RequestParam(value = "address", defaultValue = "null") String address, Model model, HttpSession session) {
         if (session.getAttribute("manager") != null) {
             List<Order> orders = (List<Order>) orderDAO.getByFilters(id, order_date, address);
-            List sum_list = new ArrayList();
-
-            for (Order order : orders) {
-                int total_sum = 0;
-
-                for (OrderProduct order_product : order.getOrderProducts()) {
-                    total_sum += order_product.getProduct().getPrice();
-                }
-
-                sum_list.add(total_sum);
-            }
 
             model.addAttribute("title", "Заказы");
-            model.addAttribute("orders", orders); 
-            model.addAttribute("sum_list", sum_list);
+            model.addAttribute("orders", orders);
             return "admin_orders";
         } else {
             return "redirect:/admin/auth";
@@ -177,14 +169,16 @@ public class AdminController {
     public String order(@PathVariable Long id, Model model, HttpSession session) {
         if (session.getAttribute("manager") != null) {
             Order order = orderDAO.getById(id);
+            List<OrderProduct> order_products = orderProductDAO.getByOrderId(id);
             int total_sum = 0;
 
-            for (OrderProduct order_product : order.getOrderProducts()) {
+            for (OrderProduct order_product : order_products) {
                 total_sum += order_product.getProduct().getPrice();
             }
 
             model.addAttribute("title", "Заказ " + id);
             model.addAttribute("order", order);
+            model.addAttribute("order_products", order_products);
             model.addAttribute("total_sum", total_sum);
             return "admin_order";
         } else {
@@ -332,6 +326,7 @@ public class AdminController {
     @PostMapping("/saveOrder")
     public String saveClient(
         @RequestParam("id") Long id,
+        @RequestParam("client_id") Long client_id,
         @RequestParam("delivery_date") String delivery_date,
         @RequestParam("address") String address,
         @RequestParam("status") String status,
@@ -340,11 +335,25 @@ public class AdminController {
     ) {
         if (session.getAttribute("manager") != null) {
             Order order = new Order();
+            Client client = clientDAO.getById(client_id);
+
+            switch (status) {
+                case "1":
+                    status = "В сборке";
+                    break;
+                case "2":
+                    status = "Доставляется";
+                    break;
+                case "3":
+                    status = "Доставлен";
+                    break;
+            }
 
             order.setId(id);
             order.setDelivery_date(Date.valueOf(delivery_date));
             order.setAddress(address);
             order.setStatus(status);
+            order.setClient(client);
 
             orderDAO.save(order);
             return "redirect:/admin/order/" + id;

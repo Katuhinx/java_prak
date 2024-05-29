@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -18,9 +17,9 @@ public class ManagerDAOTest {
 
     @Test
     public void testGetByLogin() {
-        Manager manager = managerDAO.getByLogin("testmanager", "54321");
-        Assert.assertNotNull(manager);
-        Assert.assertEquals("testmanager", manager.getLogin());
-        Assert.assertEquals("password", manager.getPassword());
+        Manager manager = managerDAO.getByLogin("admin", "12345");
+        assertNotNull(manager);
+        assertEquals("admin", manager.getLogin());
+        assertEquals("12345", manager.getPassword());
     }
 }

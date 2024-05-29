@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 
 @SpringBootTest
@@ -18,8 +18,8 @@ public class OrderProductDAOTest {
 
     @Test
     public void testGetByOrderProduct() {
-        List<OrderProduct> orderProducts = orderProductDAO.getByOrderId(1);
-        Assert.assertNotNull(orderProducts);
-        Assert.assertTrue(orderProducts.size() > 0);
+        List<OrderProduct> orderProducts = orderProductDAO.getByOrderId(1L);
+        assertNotNull(orderProducts);
+        assertTrue(orderProducts.size() > 0);
     }
 }

@@ -1,6 +1,5 @@
 package com.pismennaya.shop.interfaces.impl;
 
-import com.pismennaya.shop.models.Manager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;

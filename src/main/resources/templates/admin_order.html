@@ -146,8 +146,9 @@
 <main class="main-content">
     <h2 th:text="${title}" />
     <div class="data-container">
-        <form action="#" th:action="@{/admin/saveOrder}" method="post">
+        <form class="order-form" action="#" th:action="@{/admin/saveOrder}" method="post">
             <input type="hidden" th:name="id" th:value="${order.id}" />
+            <input type="hidden" th:name="client_id" th:value="${order.client.id}" />
             <label>
                 Номер заказа: <span th:text="${order.id}" />
             </label>
@@ -163,9 +164,9 @@
             <label>
                 Статус: 
                 <select th:name="status" required>
-                    <option th:value="В сборке" th:text="В сборке" />
-                    <option th:value="Доставляется" th:text="Доставляется" />
-                    <option th:value="Доставлен" th:text="Доставлен" />
+                    <option th:value="1">В сборке</option>
+                    <option th:value="2">Доставляется</option>
+                    <option th:value="3">Доставлен</option>
                 </select>
             </label>
             <label>
@@ -173,10 +174,10 @@
             </label>
             <div>
                 <h5>Товары</h5>
-                <p th:each="orderProduct : ${order.orderProducts}" th:text="|${orderProduct.product.title} - ${orderProduct.quantity} шт.|"/>
+                <p th:each="order_product : ${order_products}" th:text="|${order_product.product.name} - ${order_product.quantity} шт.|"/>
             </div>
             <label>
-                Сумма: <span th:text="${total_sum}">
+                Сумма: <span th:text="|${total_sum} руб.|">
             </label>
             <div class="action-container">
                 <button class="primary-btn" type="submit">Сохранить</button>
