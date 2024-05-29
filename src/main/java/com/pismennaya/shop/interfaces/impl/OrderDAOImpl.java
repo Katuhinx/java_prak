@@ -47,4 +47,17 @@ public class OrderDAOImpl extends CommonDAOImpl<Order, Long> implements OrderDAO
             return session.createQuery(criteriaQuery).getResultList();
         }
     }
+
+    @Override
+    public List<Order> getByClient(Long client_id) {
+        try (Session session = sessionFactory.openSession()) {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
+            Root<Order> root = criteriaQuery.from(Order.class);
+            Predicate criteria = criteriaBuilder.equal(root.get("client").get("id"), client_id);
+            criteriaQuery.select(root).where(criteria);
+
+            return session.createQuery(criteriaQuery).getResultList();
+        }
+    }
 }

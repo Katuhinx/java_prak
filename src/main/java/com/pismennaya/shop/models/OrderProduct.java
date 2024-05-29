@@ -15,10 +15,10 @@ public class OrderProduct implements CommonEntity<Long>{
     private Long id;
 
     @Column(nullable = false)
-    private int id_order;
+    private int order_id;
 
     @Column(nullable = false)
-    private int id_product;
+    private int product_id;
 
     @Column(nullable = false)
     private int quantity;

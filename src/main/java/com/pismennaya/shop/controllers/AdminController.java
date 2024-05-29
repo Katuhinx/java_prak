@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -67,6 +68,10 @@ public class AdminController {
         if (session.getAttribute("manager") != null) {
             List<Order> orders = (List<Order>) orderDAO.getByFilters(id, order_date, address);
 
+            for (Order order : orders) {
+                order.getOrderProducts();
+            }
+
             model.addAttribute("title", "Заказы");
             model.addAttribute("orders", orders);
             return "admin_orders";
@@ -89,7 +94,7 @@ public class AdminController {
     }
 
     @GetMapping("/product/{id}")
-    public String product(@PathVariable Long id, Model model) {
+    public String product(@PathVariable Long id, Model model, HttpSession session) {
         if (session.getAttribute("manager") != null) {
             Product product = productDAO.getById(id);
             List<Category> categories = (List<Category>) categoryDAO.getAll();
@@ -103,13 +108,57 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/product/new")
+    public String productNew(Model model, HttpSession session) {
+        if (session.getAttribute("manager") != null) {
+            List<Category> categories = (List<Category>) categoryDAO.getAll();
+
+            model.addAttribute("title", "Новый товар");
+            model.addAttribute("categories", categories);
+            return "admin_new_product";
+        } else {
+            return "redirect:/admin/auth";
+        }
+    }
+
+    @GetMapping("/category/{id}")
+    public String category(@PathVariable Long id, Model model, HttpSession session) {
+        if (session.getAttribute("manager") != null) {
+            Category category = categoryDAO.getById(id);
+
+            model.addAttribute("title", category.getName());
+            model.addAttribute("category", category);
+            return "admin_category";
+        } else {
+            return "redirect:/admin/auth";
+        }
+    }
+
+    @GetMapping("/category/new")
+    public String categoryNew(Model model, HttpSession session) {
+        if (session.getAttribute("manager") != null) {
+            model.addAttribute("title", "Новая категория");
+
+            return "admin_new_category";
+        } else {
+            return "redirect:/admin/auth";
+        }
+    }
+
     @GetMapping("/client/{id}")
-    public String product(@PathVariable Long id, Model model) {
+    public String client(@PathVariable Long id, Model model, HttpSession session) {
         if (session.getAttribute("manager") != null) {
             Client client = clientDAO.getById(id);
+            List<Order> orders = (List<Order>) orderDAO.getByClient(id);
+            List<String> addresses = new ArrayList<String>();
+
+            for (Order order : orders) {
+                addresses.add(order.getAddress());
+            }
 
             model.addAttribute("title", client.getName());
             model.addAttribute("client", client);
+            model.addAttribute("addresses", addresses);
             return "admin_client";
         } else {
             return "redirect:/admin/auth";
@@ -130,10 +179,10 @@ public class AdminController {
 
     @PostMapping("/saveProduct")
     public String saveProduct(
-        @RequestParam("id") Long id,
+        @RequestParam(value = "id", defaultValue = "null") String id,
         @RequestParam("name") String name,
         @RequestParam("price") int price,
-        @RequestParam("category") int category,
+        @RequestParam("category") Long category,
         @RequestParam("description") String description,
         @RequestParam("quantity") int quantity,
         @RequestParam("country") String country,
@@ -147,29 +196,41 @@ public class AdminController {
         @RequestParam("power") int power,
         @RequestParam("diagonal") float diagonal,
         @RequestParam("resolution") String resolution,
-        @RequestParam("chamber") String chamber,
-        @RequestParam("steam_suply") String steam_suply,
+        @RequestParam("chamber") int chamber,
+        @RequestParam("steam_suply") int steam_suply,
         Model model, 
         HttpSession session
     ) {
         if (session.getAttribute("manager") != null) {
             Product product = new Product();
 
-            product.setId(id);
+            product.setId(id.equals("null") ? null : Long.parseLong(id));
             product.setName(name);
             product.setPrice(price);
             product.setCategory(categoryDAO.getById(category));
             product.setDescription(description);
             product.setQuantity(quantity);
-            product.setCountry(country);
-            product.setProduction(production);
-            product.setColor(color);
-            product.setMaterial(material);
+            product.setCountry(country.isEmpty() ? null : country);
+            product.setProduction(production.isEmpty() ? null : production);
+            product.setColor(color.isEmpty() ? null : color);
+            product.setMaterial(material.isEmpty() ? null : material);
             product.setWarranty(warranty);
-            
+            product.setWeight(weight);
+            product.setVolume(volume);
+            product.setSize(size.isEmpty() ? null : size);
+            product.setPower(power);
+            product.setDiagonal(diagonal);
+            product.setResolution(resolution.isEmpty() ? null : resolution);
+            product.setChamber(chamber);
+            product.setSteam_suply(steam_suply);
 
             productDAO.save(product);
-            return "redirect:/admin/product/" + id;
+
+            if (id.equals("null")) {
+                return "redirect:/admin/products";
+            } else {
+                return "redirect:/admin/product/" + id;
+            }
         } else {
             return "redirect:/admin/auth";
         }
@@ -180,6 +241,36 @@ public class AdminController {
         if (session.getAttribute("manager") != null) {
             productDAO.deleteById(id);
             return "redirect:/admin/products";
+        } else {
+            return "redirect:/admin/auth";
+        }
+    }
+
+    @PostMapping("/saveCategory")
+    public String saveCategory(@RequestParam(value = "id", defaultValue = "null") String id, @RequestParam("name") String name, Model model, HttpSession session) {
+        if (session.getAttribute("manager") != null) {
+            Category category = new Category();
+
+            category.setId(id.equals("null") ? null : Long.parseLong(id));
+            category.setName(name);
+
+            categoryDAO.save(category);
+
+            if (id.equals("null")) {
+                return "redirect:/admin/categories";
+            } else {
+                return "redirect:/admin/category/" + id;
+            }
+        } else {
+            return "redirect:/admin/auth";
+        }
+    }
+
+    @GetMapping("/removeCategory/{id}")
+    public String removeCategory(@PathVariable Long id, Model model, HttpSession session) {
+        if (session.getAttribute("manager") != null) {
+            categoryDAO.deleteById(id);
+            return "redirect:/admin/categories";
         } else {
             return "redirect:/admin/auth";
         }
@@ -200,7 +291,7 @@ public class AdminController {
 
             client.setId(id);
             client.setName(name);
-            client.setSurame(surname);
+            client.setSurname(surname);
             client.setPhone(phone);
             client.setEmail(email);
 

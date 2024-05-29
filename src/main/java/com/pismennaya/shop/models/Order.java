@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import java.sql.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "orders")
@@ -33,7 +34,7 @@ public class Order implements CommonEntity<Long>{
     @Column(nullable = false)
     private String status;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order_id")
     private Set<OrderProduct> orderProducts;
 
     public Order(Client client, Date delivery_date, String address, String status) {
