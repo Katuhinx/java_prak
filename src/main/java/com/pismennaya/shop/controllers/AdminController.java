@@ -80,7 +80,7 @@ public class AdminController {
             }
 
             model.addAttribute("title", "Заказы");
-            model.addAttribute("orders", orders);
+            model.addAttribute("orders", orders); 
             model.addAttribute("sum_list", sum_list);
             return "admin_orders";
         } else {
@@ -168,6 +168,19 @@ public class AdminController {
             model.addAttribute("client", client);
             model.addAttribute("addresses", addresses);
             return "admin_client";
+        } else {
+            return "redirect:/admin/auth";
+        }
+    }
+
+    @GetMapping("/order/{id}")
+    public String order(@PathVariable Long id, Model model, HttpSession session) {
+        if (session.getAttribute("manager") != null) {
+            Order order = orderDAO.getById(id);
+
+            model.addAttribute("title", "Заказ " + id);
+            model.addAttribute("order", order);
+            return "admin_order";
         } else {
             return "redirect:/admin/auth";
         }
