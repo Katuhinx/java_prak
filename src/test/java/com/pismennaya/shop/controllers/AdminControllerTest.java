@@ -1,332 +1,200 @@
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import static org.junit.jupiter.api.Assertions.*;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class AdminControllerSystemTests {
 
-public class HomeControllerSystemTests {
     @LocalServerPort
-
     private int port;
 
-
     private WebDriver driver;
 
-
     @BeforeEach
-
     public void setUp() {
-
         System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
-
         driver = new ChromeDriver();
-
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
-        driver.get("http://localhost:" + port);
-
+        driver.get("http://localhost:" + port + "/admin");
     }
 
-
     @AfterEach
-
     public void tearDown() {
-
         if (driver!= null) {
-
             driver.quit();
-
         }
-
     }
 
+    @Test
+    public void testLogin() {
+        driver.findElement(By.name("username")).sendKeys("admin");
+        driver.findElement(By.name("password")).sendKeys("password");
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
+        WebElement dashboard = driver.findElement(By.cssSelector("h1"));
+        assertTrue(dashboard.isDisplayed());
+        assertEquals("Admin Dashboard", dashboard.getText());
+    }
 
     @Test
+    public void testInvalidLogin() {
+        driver.findElement(By.name("username")).sendKeys("invalid");
+        driver.findElement(By.name("password")).sendKeys("invalid");
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
+        WebElement error = driver.findElement(By.cssSelector(".error"));
+        assertTrue(error.isDisplayed());
+        assertEquals("Invalid username or password", error.getText());
+    }
 
-    public void testHome() {
-
+    @Test
+    public void testProductList() {
+        testLogin();
+        driver.findElement(By.linkText("Products")).click();
         List<WebElement> products = driver.findElements(By.cssSelector(".product"));
-
         assertTrue(products.size() > 0);
-
-    }
-
-
-    @Test
-
-    public void testProduct() {
-
-        driver.findElement(By.cssSelector(".product a")).click();
-
-        WebElement title = driver.findElement(By.cssSelector("h1"));
-
-        assertTrue(title.isDisplayed());
-
-    }
-
-
-    @Test
-
-    public void testCart() {
-
-        driver.findElement(By.cssSelector(".product a")).click();
-
-        driver.findElement(By.cssSelector(".add-to-cart")).click();
-
-        driver.findElement(By.cssSelector(".cart a")).click();
-
-        List<WebElement> products = driver.findElements(By.cssSelector(".cart-product"));
-
-        assertTrue(products.size() > 0);
-
-    }
-
-
-    @Test
-
-    public void testOrder() {
-
-        driver.findElement(By.cssSelector(".product a")).click();
-
-        driver.findElement(By.cssSelector(".add-to-cart")).click();
-
-        driver.findElement(By.cssSelector(".cart a")).click();
-
-        driver.findElement(By.cssSelector(".order-button")).click();
-
-        WebElement title = driver.findElement(By.cssSelector("h1"));
-
-        assertTrue(title.getText().contains("Оформление заказа"));
-
-    }
-
-
-    @Test
-    public void testSuccessOrder() {
-        driver.findElement(By.cssSelector(".product a")).click();
-        driver.findElement(By.cssSelector(".add-to-cart")).click();
-        driver.findElement(By.cssSelector(".cart a")).click();
-        driver.findElement(By.cssSelector(".order-button")).click();
-        driver.findElement(By.cssSelector(".order-form input[name='name']")).sendKeys("Test Name");
-        driver.findElement(By.cssSelector(".order-form input[name='surname']")).sendKeys("Test Surname");
-        driver.findElement(By.cssSelector(".order-form input[name='phone']")).sendKeys("1234567890");
-        driver.findElement(By.cssSelector(".order-form input[name='email']")).sendKeys("test@example.com");
-        driver.findElement(By.cssSelector(".order-form input[name='address']")).sendKeys("Test Address");
-        driver.findElement(By.cssSelector(".order-form input[name='delivery_date']")).sendKeys(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-        driver.findElement(By.cssSelector(".order-form button[type='submit']")).click();
-        WebElement title = driver.findElement(By.cssSelector("h1"));
-        assertTrue(title.getText().contains("Заказ успешно оформлен!"));
-
     }
 
     @Test
-    public void testAddToCart() {
-        driver.findElement(By.cssSelector(".product a")).click();
-        int initialCartSize = driver.findElements(By.cssSelector(".cart-product")).size();
-        driver.findElement(By.cssSelector(".add-to-cart")).click();
-        int finalCartSize = driver.findElements(By.cssSelector(".cart-product")).size();
-        assertTrue(finalCartSize > initialCartSize);
+    public void testCreateProduct() {
+        testLogin();
+        driver.findElement(By.linkText("Create Product")).click();
+        driver.findElement(By.name("name")).sendKeys("Test Product");
+        driver.findElement(By.name("price")).sendKeys("10.99");
+        driver.findElement(By.name("description")).sendKeys("Test product description");
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
+        WebElement success = driver.findElement(By.cssSelector(".success"));
+        assertTrue(success.isDisplayed());
+        assertEquals("Product created successfully", success.getText());
     }
 
     @Test
-    public void testRemoveFromCart() {
-        driver.findElement(By.cssSelector(".product a")).click();
-        driver.findElement(By.cssSelector(".add-to-cart")).click();
-        driver.findElement(By.cssSelector(".cart a")).click();
-        int initialCartSize = driver.findElements(By.cssSelector(".cart-product")).size();
-        driver.findElement(By.cssSelector(".cart-product.remove-from-cart")).click();
-        int finalCartSize = driver.findElements(By.cssSelector(".cart-product")).size();
-        assertTrue(finalCartSize < initialCartSize);
-
+    public void testEditProduct() {
+        testLogin();
+        driver.findElement(By.linkText("Products")).click();
+        driver.findElement(By.linkText("Edit")).click();
+        driver.findElement(By.name("name")).clear();
+        driver.findElement(By.name("name")).sendKeys("Updated Test Product");
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
+        WebElement success = driver.findElement(By.cssSelector(".success"));
+        assertTrue(success.isDisplayed());
+        assertEquals("Product updated successfully", success.getText());
     }
 
+    @Test
+    public void testDeleteProduct() {
+        testLogin();
+        driver.findElement(By.linkText("Products")).click();
+        driver.findElement(By.linkText("Delete")).click();
+        WebElement confirm = driver.findElement(By.cssSelector(".confirm"));
+        assertTrue(confirm.isDisplayed());
+        assertEquals("Are you sure you want to delete this product?", confirm.getText());
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
+        WebElement success = driver.findElement(By.cssSelector(".success"));
+        assertTrue(success.isDisplayed());
+        assertEquals("Product deleted successfully", success.getText());
+    }
 
+    @Test
+    public void testCategoryList() {
+        testLogin();
+        driver.findElement(By.linkText("Categories")).click();
+        List<WebElement> categories = driver.findElements(By.cssSelector(".category"));
+        assertTrue(categories.size() > 0);
+    }
+
+    @Test
+    public void testCreateCategory() {
+        testLogin();
+        driver.findElement(By.linkText("Create Category")).click();
+        driver.findElement(By.name("name")).sendKeys("Test Category");
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
+        WebElement success = driver.findElement(By.cssSelector(".success"));
+        assertTrue(success.isDisplayed());
+        assertEquals("Category created successfully", success.getText());
+    }
+
+    @Test
+    public void testEditCategory() {
+        testLogin();
+        driver.findElement(By.linkText("Categories")).click();
+        driver.findElement(By.linkText("Edit")).click();
+        driver.findElement(By.name("name")).clear();
+        driver.findElement(By.name("name")).sendKeys("Updated Test Category");
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
+        WebElement success = driver.findElement(By.cssSelector(".success"));
+        assertTrue(success.isDisplayed());
+        assertEquals("Category updated successfully", success.getText());
+    }
+
+    @Test
+    public void testDeleteCategory() {
+        testLogin();
+        driver.findElement(By.linkText("Categories")).click();
+        driver.findElement(By.linkText("Delete")).click();
+        WebElement confirm = driver.findElement(By.cssSelector(".confirm"));
+        assertTrue(confirm.isDisplayed());
+        assertEquals("Are you sure you want to delete this category?", confirm.getText());
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
+        WebElement success = driver.findElement(By.cssSelector(".success"));
+        assertTrue(success.isDisplayed());
+        assertEquals("Category deleted successfully", success.getText());
+    }
+
+    @Test
+    public void testOrderList() {
+        testLogin();
+        driver.findElement(By.linkText("Orders")).click();
+        List<WebElement> orders = driver.findElements(By.cssSelector(".order"));
+        assertTrue(orders.size() > 0);
+    }
+
+    @Test
+    public void testViewOrder() {
+        testLogin();
+        driver.findElement(By.linkText("Orders")).click();
+        driver.findElement(By.linkText("View")).click();
+        WebElement orderDetails = driver.findElement(By.cssSelector(".order-details"));
+        assertTrue(orderDetails.isDisplayed());
+    }
+
+    @Test
+    public void testEditOrder() {
+        testLogin();
+        driver.findElement(By.linkText("Orders")).click();
+        driver.findElement(By.linkText("Edit")).click();
+        driver.findElement(By.name("status")).sendKeys("Shipped");
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
+        WebElement success = driver.findElement(By.cssSelector(".success"));
+        assertTrue(success.isDisplayed());
+        assertEquals("Order updated successfully", success.getText());
+    }
+
+    @Test
+    public void testClientList() {
+        testLogin();
+        driver.findElement(By.linkText("Clients")).click();
+        List<WebElement> clients = driver.findElements(By.cssSelector(".client"));
+        assertTrue(clients.size() > 0);
+    }
+
+    @Test
+    public void testEditClient() {
+        testLogin();
+        driver.findElement(By.linkText("Clients")).click();
+        driver.findElement(By.linkText("Edit")).click();
+        driver.findElement(By.name("name")).clear();
+        driver.findElement(By.name("name")).sendKeys("Updated Test Client");
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
+        WebElement success = driver.findElement(By.cssSelector(".success"));
+        assertTrue(success.isDisplayed());
+        assertEquals("Client updated successfully", success.getText());
+    }
 }
-
-
-/*
-import org.junit.jupiter.api.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.openqa.selenium.*;
-
-import org.openqa.selenium.firefox.FirefoxDriver;
-
-
-import java.util.List;
-
-import java.util.concurrent.TimeUnit;
-
-
-public class ProductDAOTest {
-
-
-    private WebDriver driver;
-
-    private ProductDAO productDAO;
-
-
-    @BeforeEach
-
-    public void setUp() {
-
-        System.setProperty("webdriver.gecko.driver", "/path/to/geckodriver");
-
-        driver = new FirefoxDriver();
-
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
-        productDAO = new ProductDAOImpl();
-
-    }
-
-
-    @Test
-
-    public void testGetByFiltersWithName() {
-
-        List<Product> products = productDAO.getByFilters("test", "null");
-
-        driver.get("http://localhost:8080/products?name=test");
-
-
-        List<WebElement> productElements = driver.findElements(By.className("product"));
-
-
-        assertEquals(products.size(), productElements.size());
-
-
-        for (int i = 0; i < products.size(); i++) {
-
-            Product product = products.get(i);
-
-            WebElement productElement = productElements.get(i);
-
-
-            assertEquals(product.getName(), productElement.findElement(By.className("name")).getText());
-
-            assertEquals(product.getCategory().getId(), Integer.parseInt(productElement.findElement(By.className("category")).getText()));
-
-        }
-
-    }
-
-
-    @Test
-
-    public void testGetByFiltersWithCategory() {
-
-        List<Product> products = productDAO.getByFilters("null", "1");
-
-        driver.get("http://localhost:8080/products?category=1");
-
-
-        List<WebElement> productElements = driver.findElements(By.className("product"));
-
-
-        assertEquals(products.size(), productElements.size());
-
-
-        for (int i = 0; i < products.size(); i++) {
-
-            Product product = products.get(i);
-
-            WebElement productElement = productElements.get(i);
-
-
-            assertEquals(product.getName(), productElement.findElement(By.className("name")).getText());
-
-            assertEquals(product.getCategory().getId(), Integer.parseInt(productElement.findElement(By.className("category")).getText()));
-
-        }
-
-    }
-
-
-    @Test
-
-    public void testGetByFiltersWithNameAndCategory() {
-
-        List<Product> products = productDAO.getByFilters("test", "1");
-
-        driver.get("http://localhost:8080/products?name=test&category=1");
-
-
-        List<WebElement> productElements = driver.findElements(By.className("product"));
-
-
-        assertEquals(products.size(), productElements.size());
-
-
-        for (int i = 0; i < products.size(); i++) {
-
-            Product product = products.get(i);
-
-            WebElement productElement = productElements.get(i);
-
-
-            assertEquals(product.getName(), productElement.findElement(By.className("name")).getText());
-
-            assertEquals(product.getCategory().getId(), Integer.parseInt(productElement.findElement(By.className("category")).getText()));
-
-        }
-
-    }
-
-
-    @Test
-
-    public void testGetByFiltersWithInvalidName() {
-
-        assertThrows(NoSuchElementException.class, () -> {
-
-            productDAO.getByFilters("invalid", "null");
-
-            driver.get("http://localhost:8080/products?name=invalid");
-
-            driver.findElement(By.className("product"));
-
-        });
-
-    }
-
-
-    @Test
-
-    public void testGetByFiltersWithInvalidCategory() {
-
-        assertThrows(NoSuchElementException.class, () -> {
-
-            productDAO.getByFilters("null", "invalid");
-
-            driver.get("http://localhost:8080/products?category=invalid");
-
-            driver.findElement(By.className("product"));
-
-        });
-
-    }
-
-
-    @AfterEach
-
-    public void tearDown() {
-
-        driver.quit();
-
-    }
-
-}*/
