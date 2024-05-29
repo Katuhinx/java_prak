@@ -114,11 +114,29 @@ public class AdminController {
     @PostMapping("/saveProduct")
     public String saveProduct(
         @RequestParam("id") int id,
+        @RequestParam("name") String name,
+        @RequestParam("price") int price,
+        @RequestParam("category") int category,
+        @RequestParam("description") String description,
+        @RequestParam("quantity") int quantity,
+        @RequestParam("country") String country,
+        @RequestParam("production") String production,
+        @RequestParam("color") String color,
+        @RequestParam("material") String material,
+        @RequestParam("warranty") String warranty,
+        @RequestParam("weight") float weight,
+        @RequestParam("volume") float volume,
+        @RequestParam("size") String size,
+        @RequestParam("power") int power,
+        @RequestParam("diagonal") float diagonal,
+        @RequestParam("resolution") String resolution,
+        @RequestParam("chamber") String chamber,
+        @RequestParam("steam_suply") String steam_suply,
         Model model, 
         HttpSession session
     ) {
         if (session.getAttribute("manager") != null) {
-           
+            productDAO.update(null);
 
             
             return "redirect:/admin/product/" + id;
