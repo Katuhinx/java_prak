@@ -8,6 +8,7 @@ import com.pismennaya.shop.interfaces.impl.OrderDAOImpl;
 import com.pismennaya.shop.interfaces.impl.ProductDAOImpl;
 import com.pismennaya.shop.models.Client;
 import com.pismennaya.shop.models.Order;
+import com.pismennaya.shop.models.OrderProduct;
 import com.pismennaya.shop.models.Product;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,8 +145,11 @@ public class HomeController {
 
             for(Long id : cart) {
                 Product product = productDAO.getById(id);
-                products.add(product);
-                total_price += product.getPrice();
+                OrderProduct order_product = new OrderProduct();
+                order_product.setOrder(order);
+                order_product.setProduct(product);
+                order_product.setQuantity(1);
+                order_products.add(order_product);
             }
 
             order.setClient(client);
@@ -153,11 +157,11 @@ public class HomeController {
             order.setDelivery_date(Date.valueOf(delivery_date));
             order.setAddress(address);
             order.setStatus("В сборке");
-            order.setOrderProducts();
+            order.setOrderProducts(order_products);
 
             orderDAO.save(order);
         }
 
-        return "redirect:/";
+        return "redirect:/success-order";
     }
 }
