@@ -130,7 +130,7 @@ public class AdminController {
 
     @PostMapping("/saveProduct")
     public String saveProduct(
-        @RequestParam("id") int id,
+        @RequestParam("id") Long id,
         @RequestParam("name") String name,
         @RequestParam("price") int price,
         @RequestParam("category") int category,
@@ -140,7 +140,7 @@ public class AdminController {
         @RequestParam("production") String production,
         @RequestParam("color") String color,
         @RequestParam("material") String material,
-        @RequestParam("warranty") String warranty,
+        @RequestParam("warranty") int warranty,
         @RequestParam("weight") float weight,
         @RequestParam("volume") float volume,
         @RequestParam("size") String size,
@@ -153,9 +153,22 @@ public class AdminController {
         HttpSession session
     ) {
         if (session.getAttribute("manager") != null) {
-            productDAO.update(null);
+            Product product = new Product();
 
+            product.setId(id);
+            product.setName(name);
+            product.setPrice(price);
+            product.setCategory(categoryDAO.getById(category));
+            product.setDescription(description);
+            product.setQuantity(quantity);
+            product.setCountry(country);
+            product.setProduction(production);
+            product.setColor(color);
+            product.setMaterial(material);
+            product.setWarranty(warranty);
             
+
+            productDAO.save(product);
             return "redirect:/admin/product/" + id;
         } else {
             return "redirect:/admin/auth";
@@ -174,7 +187,7 @@ public class AdminController {
 
     @PostMapping("/saveClient")
     public String saveClient(
-        @RequestParam("id") int id,
+        @RequestParam("id") Long id,
         @RequestParam("name") String name,
         @RequestParam("surname") String surname,
         @RequestParam("phone") String phone,
@@ -183,7 +196,15 @@ public class AdminController {
         HttpSession session
     ) {
         if (session.getAttribute("manager") != null) {
-            clientDAO.save();
+            Client client = new Client();
+
+            client.setId(id);
+            client.setName(name);
+            client.setSurame(surname);
+            client.setPhone(phone);
+            client.setEmail(email);
+
+            clientDAO.save(client);
             return "redirect:/admin/client/" + id;
         } else {
             return "redirect:/admin/auth";
