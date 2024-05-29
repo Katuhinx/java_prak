@@ -90,13 +90,17 @@ public class AdminController {
 
     @GetMapping("/product/{id}")
     public String product(@PathVariable Long id, Model model) {
-        Product product = productDAO.getById(id);
-        List<Category> categories = (List<Category>) categoryDAO.getAll();
+        if (session.getAttribute("manager") != null) {
+            Product product = productDAO.getById(id);
+            List<Category> categories = (List<Category>) categoryDAO.getAll();
 
-        model.addAttribute("title", product.getName());
-        model.addAttribute("product", product);
-        model.addAttribute("categories", categories);
-        return "admin_product";
+            model.addAttribute("title", product.getName());
+            model.addAttribute("product", product);
+            model.addAttribute("categories", categories);
+            return "admin_product";
+        } else {
+            return "redirect:/admin/auth";
+        }
     }
 
     @PostMapping("/authManager")
@@ -145,7 +149,15 @@ public class AdminController {
         }
     }
 
-
+    @GetMapping("/removeProduct/{id}")
+    public String removeProduct(@PathVariable Long id, Model model) {
+        if (session.getAttribute("manager") != null) {
+            productDAO.deleteById(id);
+            return "redirect:/admin/products";
+        } else {
+            return "redirect:/admin/auth";
+        }
+    }
 
 /*
     @GetMapping("/clients")
