@@ -89,6 +89,12 @@ public class HomeController {
         return "order";
     }
 
+    @GetMapping("/success-order")
+    public String successOrder(Model model, HttpSession session) {
+        model.addAttribute("title", "Заказ успешно оформлен!");
+        return "success_order";
+    }
+
     @PostMapping("/addToCart")
     public String addToCart(@RequestParam("id") Long id, Model model, HttpSession session) {
         List<Long> cart = (List<Long>) session.getAttribute("cart");
