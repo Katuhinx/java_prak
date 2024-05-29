@@ -65,7 +65,6 @@ public class ClientDAOTest {
         List<Client> clients = clientDAO.getByFilters("Test1");
         Assert.assertNotNull(clients);
         Assert.assertTrue(clients.size() > 0);
-
     }
 
     @Test
