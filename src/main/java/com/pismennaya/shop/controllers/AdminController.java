@@ -111,6 +111,22 @@ public class AdminController {
         return "redirect:/admin/auth?error=1";
     }
 
+    @PostMapping("/saveProduct")
+    public String saveProduct(
+        @RequestParam("id") int id,
+        Model model, 
+        HttpSession session
+    ) {
+        if (session.getAttribute("manager") != null) {
+           
+
+            
+            return "redirect:/admin/product/" + id;
+        } else {
+            return "redirect:/admin/auth";
+        }
+    }
+
 
 
 /*
