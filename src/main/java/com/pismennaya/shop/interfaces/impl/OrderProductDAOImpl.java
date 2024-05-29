@@ -11,4 +11,15 @@ public class OrderProductDAOImpl extends CommonDAOImpl<OrderProduct, Long> imple
     public OrderProductDAOImpl() {
         super(OrderProduct.class);
     }
+
+    @Override
+    public List<OrderProduct> getByOrderId(Long order_id) {
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<OrderProduct> criteriaQuery = criteriaBuilder.createQuery(OrderProduct.class);
+        Root<OrderProduct> root = criteriaQuery.from(OrderProduct.class);
+        Predicate criteria = criteriaBuilder.equal(root.get("order"), order_id);
+        criteriaQuery.select(root).where(criteria);
+
+        return session.createQuery(criteriaQuery).getResultList();
+    }
 }
