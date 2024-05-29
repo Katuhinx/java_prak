@@ -161,17 +161,22 @@
                 Адрес: <input type="text" th:name="address" th:value="${order.address}" required>
             </label>
             <label>
-                Статус: <input type="text" th:name="status" th:value="${client.email}" required>
+                Статус: 
+                <select th:name="status" required>
+                    <option th:value="В сборке" th:text="В сборке" />
+                    <option th:value="Доставляется" th:text="Доставляется" />
+                    <option th:value="Доставлен" th:text="Доставлен" />
+                </select>
             </label>
             <label>
                 Клиент: <a th:href="@{|/admin/client/${order.client.id}}" th:text="|${order.client.name} ${order.client.surname}|"/>
             </label>
             <div>
                 <h5>Товары</h5>
-                <p th:each="product : ${order.orderProducts}" th:text="|${product.title}" />
+                <p th:each="orderProduct : ${order.orderProducts}" th:text="|${orderProduct.product.title} - ${orderProduct.quantity} шт.|"/>
             </div>
             <label>
-                Сумма: <input type="text" th:name="email" th:value="${client.email}" required>
+                Сумма: <span th:text="${total_sum}">
             </label>
             <div class="action-container">
                 <button class="primary-btn" type="submit">Сохранить</button>

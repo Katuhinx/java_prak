@@ -177,9 +177,15 @@ public class AdminController {
     public String order(@PathVariable Long id, Model model, HttpSession session) {
         if (session.getAttribute("manager") != null) {
             Order order = orderDAO.getById(id);
+            int total_sum = 0;
+
+            for (OrderProduct order_product : order.getOrderProducts()) {
+                total_sum += order_product.getProduct().getPrice();
+            }
 
             model.addAttribute("title", "Заказ " + id);
             model.addAttribute("order", order);
+            model.addAttribute("total_sum", total_sum);
             return "admin_order";
         } else {
             return "redirect:/admin/auth";
@@ -323,6 +329,17 @@ public class AdminController {
         }
     }
 
+    @PostMapping("/saveOrder")
+    public String saveClient(
+        @RequestParam("id") Long id,
+        @RequestParam("delivery_date") String delivery_date,
+        @RequestParam("address") String address,
+        @RequestParam("status") String status,
+        Model model,
+        HttpSession session
+    ) {
+        
+    }
 /*
     @GetMapping("/clients")
     public String greetParam(@PathVariable("name") String name) {
