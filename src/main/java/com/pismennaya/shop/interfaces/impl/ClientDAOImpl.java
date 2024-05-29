@@ -44,4 +44,18 @@ public class ClientDAOImpl extends CommonDAOImpl<Client, Long> implements Client
             return session.createQuery(criteriaQuery).getResultList();
         }
     }
+
+    @Override
+    public Client getByPhone(String phone) {
+        try (Session session = sessionFactory.openSession()) {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Client> criteriaQuery = criteriaBuilder.createQuery(Client.class);
+            Root<Client> root = criteriaQuery.from(Client.class);
+            Predicate criteria = criteriaBuilder.equal(root.get("phone"), phone);
+
+            criteriaQuery.select(root).where(criteria);
+
+            return session.createQuery(criteriaQuery).uniqueResult();
+        }
+    }
 }

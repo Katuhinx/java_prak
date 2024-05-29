@@ -113,21 +113,47 @@ public class HomeController {
         return "redirect:/cart";
     }
 
-    @GetMapping("/createOrder")
-    public String createOrder(Model model, HttpSession session) {
-        //List<Client> orders = (List<Client>) clientDAO.getAll();
+    @PostMapping("/createOrder")
+    public String createOrder(
+        @RequestParam("name") String name,
+        @RequestParam("surname") String surname,
+        @RequestParam("phone") String phone,
+        @RequestParam("email") String email,
+        @RequestParam("address") String address,
+        @RequestParam("delivery_date") String delivery_date,
+        Model model, 
+        HttpSession session
+    ) {
         List<Long> cart = (List<Long>) session.getAttribute("cart");
 
         if (cart != null) {
-            Client client = new Client("Петр", "Иванов", "89123456780", "client2@example.com" );
-            clientDAO.save(client);
+            Client client = clientDAO.getByPhone(phone);
+
+            if (client == null) {
+                client.setName(name);
+                client.setSurname(surname);
+                client.setPhone(phone);
+                client.setEmail(email);
+                clientDAO.save(client);
+
+                client = clientDAO.getByPhone(phone);
+            }
 
             Order order = new Order();
+            List<OrderProduct> order_products = new ArrayList();
+
+            for(Long id : cart) {
+                Product product = productDAO.getById(id);
+                products.add(product);
+                total_price += product.getPrice();
+            }
+
             order.setClient(client);
             order.setOrder_date(Date.valueOf(LocalDate.now()));
-            order.setDelivery_date(Date.valueOf(LocalDate.now()));
-            order.setAddress("Адрес 1");
-            order.setStatus("preparation");
+            order.setDelivery_date(Date.valueOf(delivery_date));
+            order.setAddress(address);
+            order.setStatus("В сборке");
+            order.setOrderProducts();
 
             orderDAO.save(order);
         }

@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface ClientDAO extends CommonDAO<Client, Long> {
     List<Client> getByFilters(String data);
+    Client getByPhone(String phone);
 }
