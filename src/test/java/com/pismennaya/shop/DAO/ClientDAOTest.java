@@ -1,17 +1,20 @@
 package com.pismennaya.shop.DAO;
 
 import com.pismennaya.shop.interfaces.ClientDAO;
+import com.pismennaya.shop.interfaces.impl.ClientDAOImpl;
 import com.pismennaya.shop.models.Client;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ClientDAOTest {
-    private ClientDAO clientDAO;
+    @Autowired
+    private ClientDAO clientDAO = new ClientDAOImpl();
 
     @Test
     public void testGetById() {
