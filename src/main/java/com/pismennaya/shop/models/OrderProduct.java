@@ -14,11 +14,13 @@ public class OrderProduct implements CommonEntity<Long>{
     @Column(nullable = false)
     private Long id;
 
-    @Column(nullable = false)
-    private int order_id;
+    @ManyToOne
+    @JoinColumn(name = "order_id", referencedColumnName = "id", nullable = false)
+    private Order order;
 
-    @Column(nullable = false)
-    private int product_id;
+    @ManyToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)
+    private Product product;
 
     @Column(nullable = false)
     private int quantity;

@@ -135,11 +135,11 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="order : ${orders}">
+            <tr th:each="order, iter : ${orders}">
                 <td>
                     <a class="order-number" th:href="@{|/admin/order/${order.id}|}" th:text="${order.id}"/>
                 </td>
-                <td th:text="10000"/>
+                <td th:text="${sum_list.get(iter.index)}"/>
                 <td th:text="${order.order_date}"/>
                 <td th:text="${order.delivery_date}"/>
                 <td th:text="${order.status}"/>

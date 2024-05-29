@@ -67,13 +67,21 @@ public class AdminController {
     public String clients(@RequestParam(value = "id", defaultValue = "null") String id, @RequestParam(value = "order_date", defaultValue = "null") String order_date, @RequestParam(value = "address", defaultValue = "null") String address, Model model, HttpSession session) {
         if (session.getAttribute("manager") != null) {
             List<Order> orders = (List<Order>) orderDAO.getByFilters(id, order_date, address);
+            List sum_list = new ArrayList();
 
             for (Order order : orders) {
-                order.getOrderProducts();
+                int total_sum = 0;
+
+                for (OrderProduct order_product : order.getOrderProducts()) {
+                    total_sum += order_product.getProduct().getPrice();
+                }
+
+                sum_list.add(total_sum);
             }
 
             model.addAttribute("title", "Заказы");
             model.addAttribute("orders", orders);
+            model.addAttribute("sum_list", sum_list);
             return "admin_orders";
         } else {
             return "redirect:/admin/auth";
