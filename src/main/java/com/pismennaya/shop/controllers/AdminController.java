@@ -338,7 +338,19 @@ public class AdminController {
         Model model,
         HttpSession session
     ) {
-        
+        if (session.getAttribute("manager") != null) {
+            Order order = new Order();
+
+            order.setId(id);
+            order.setDelivery_date(Date.valueOf(delivery_date));
+            order.setAddress(address);
+            order.setStatus(status);
+
+            orderDAO.save(order);
+            return "redirect:/admin/order/" + id;
+        } else {
+            return "redirect:/admin/auth";
+        }
     }
 /*
     @GetMapping("/clients")
