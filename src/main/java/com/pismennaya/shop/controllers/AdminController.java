@@ -103,6 +103,19 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/client/{id}")
+    public String product(@PathVariable Long id, Model model) {
+        if (session.getAttribute("manager") != null) {
+            Client client = clientDAO.getById(id);
+
+            model.addAttribute("title", client.getName());
+            model.addAttribute("client", client);
+            return "admin_client";
+        } else {
+            return "redirect:/admin/auth";
+        }
+    }
+
     @PostMapping("/authManager")
     public String authManager(@RequestParam("login") String login, @RequestParam("password") String password, Model model, HttpSession session) {
         Manager manager = managerDAO.getByLogin(login, password);
@@ -150,10 +163,28 @@ public class AdminController {
     }
 
     @GetMapping("/removeProduct/{id}")
-    public String removeProduct(@PathVariable Long id, Model model) {
+    public String removeProduct(@PathVariable Long id, Model model, HttpSession session) {
         if (session.getAttribute("manager") != null) {
             productDAO.deleteById(id);
             return "redirect:/admin/products";
+        } else {
+            return "redirect:/admin/auth";
+        }
+    }
+
+    @PostMapping("/saveClient")
+    public String saveClient(
+        @RequestParam("id") int id,
+        @RequestParam("name") String name,
+        @RequestParam("surname") String surname,
+        @RequestParam("phone") String phone,
+        @RequestParam("email") String email,
+        Model model,
+        HttpSession session
+    ) {
+        if (session.getAttribute("manager") != null) {
+            clientDAO.save();
+            return "redirect:/admin/client/" + id;
         } else {
             return "redirect:/admin/auth";
         }
